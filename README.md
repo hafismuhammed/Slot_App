@@ -7,8 +7,8 @@ This Django-based REST API allows candidates and interviewers to register their 
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/yourproject.git
-    cd yourproject
+    git clone https://github.com/hafismuhammed/Slot_App.git
+    cd Slot_App
     ```
 
 2. Create and activate a virtual environment:
