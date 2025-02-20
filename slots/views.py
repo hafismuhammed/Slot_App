@@ -4,16 +4,52 @@ from rest_framework import status
 from .models import Slot
 from .serializers import SlotSerializer
 from datetime import datetime, timedelta
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class CreateSlotAPIView(APIView):
     
+    
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["user_id", "role", "date", "start_time", "end_time"],
+            properties={
+                "user_id": openapi.Schema(type=openapi.TYPE_INTEGER, example=12341),
+                "role": openapi.Schema(type=openapi.TYPE_STRING, example="candidate"),
+                "date": openapi.Schema(type=openapi.TYPE_STRING, format="date", example="2025-02-20"),
+                "start_time": openapi.Schema(type=openapi.TYPE_STRING, format="time", example="15:00:00"),
+                "end_time": openapi.Schema(type=openapi.TYPE_STRING, format="time", example="20:00:00"),
+            },
+        ),
+        responses={
+            201: openapi.Response(
+                description="Slot added successfully!",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, example="Slot added successfully!")
+                    }
+                ),
+            ),
+            400: openapi.Response(
+                description="Bad Request",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "error": openapi.Schema(type=openapi.TYPE_STRING, example="Invalid input data")
+                    }
+                ),
+            ),
+        },
+    )
     def post(self, request):
         serializer = SlotSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"message": "Availability registered successfully!"}, 
+                {"message": "Slot added successfully!"}, 
                 status=status.HTTP_201_CREATED
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -21,10 +57,71 @@ class CreateSlotAPIView(APIView):
 
 class SlotAvailabilityAPIView(APIView):
     
-    def post(self, request):
-        date = request.data.get('date')
-        interviewer_id = request.data.get('interviewer_id')
-        candidate_id = request.data.get('candidate_id')
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "date",
+                openapi.IN_QUERY,
+                description="Date for which slots are needed (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=True
+            ),
+            openapi.Parameter(
+                "interviewer_id",
+                openapi.IN_QUERY,
+                description="User ID of the interviewer",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+            openapi.Parameter(
+                "candidate_id",
+                openapi.IN_QUERY,
+                description="User ID of the candidate",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                "Available interview slots",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, example="Available slots"),
+                        "slots": openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_STRING)),
+                                example=[
+                                    ["10:00:00", "11:00:00"],
+                                    ["11:00:00", "12:00:00"],
+                                    ]
+                            )
+                        )
+                    }
+                )
+            ),
+            404: openapi.Response(
+                "No slots available",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, example="No slots available"),
+                        "slots": openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_STRING)),
+                            example=[]
+                        )
+                    }
+                )
+            )
+        }
+    )
+    def get(self, request):
+        date = request.GET.get('date')
+        interviewer_id = request.GET.get('interviewer_id')
+        candidate_id = request.GET.get('candidate_id')
 
         interviewer_slots = Slot.objects.filter(role='interviewer', user_id=interviewer_id, date=date)
         candidate_slots = Slot.objects.filter(role='candidate', user_id=candidate_id, date=date)
