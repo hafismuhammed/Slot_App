@@ -14,10 +14,7 @@ class SlotSerializer(serializers.ModelSerializer):
         start_time = attrs.get('start_time')
         end_time = attrs.get('end_time')
         user_role = attrs.get('role')
-
-        if user_role not in ['candidate', 'interviewer']:
-            raise serializers.ValidationError({'role': 'Role should be either candidate or interviewer'})
-                
+     
         if start_time >= end_time:
             raise serializers.ValidationError('Start date should be less than end date')
         

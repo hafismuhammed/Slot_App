@@ -9,18 +9,42 @@ from drf_yasg import openapi
 
 
 class CreateSlotAPIView(APIView):
-    
+    """API for candidates/interviewers to register their available time slots
+    """
     
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=["user_id", "role", "date", "start_time", "end_time"],
             properties={
-                "user_id": openapi.Schema(type=openapi.TYPE_INTEGER, example=12341),
-                "role": openapi.Schema(type=openapi.TYPE_STRING, example="candidate"),
-                "date": openapi.Schema(type=openapi.TYPE_STRING, format="date", example="2025-02-20"),
-                "start_time": openapi.Schema(type=openapi.TYPE_STRING, format="time", example="15:00:00"),
-                "end_time": openapi.Schema(type=openapi.TYPE_STRING, format="time", example="20:00:00"),
+                "user_id": openapi.Schema(
+                    type=openapi.TYPE_INTEGER, 
+                    example=1, 
+                    description="ID of the user ('Interviewer or Candidate)"
+                ),
+                "role": openapi.Schema(
+                    type=openapi.TYPE_STRING, 
+                    example="candidate", 
+                    description="Role of the user (either 'candidate' or 'interviewer')"
+                ),
+                "date": openapi.Schema(
+                    type=openapi.TYPE_STRING, 
+                    format="date", 
+                    example="2025-02-20", 
+                    description="Date for which the availability is being set (YYYY-MM-DD)"
+                ),
+                "start_time": openapi.Schema(
+                    type=openapi.TYPE_STRING, 
+                    format="time", 
+                    example="15:00:00", 
+                    description="Start time of availability (24-hour format HH:MM:SS)"
+                ),
+                "end_time": openapi.Schema(
+                    type=openapi.TYPE_STRING, 
+                    format="time", 
+                    example="20:00:00", 
+                    description="End time of availability (24-hour format HH:MM:SS)"
+                ),
             },
         ),
         responses={
@@ -56,6 +80,8 @@ class CreateSlotAPIView(APIView):
     
 
 class SlotAvailabilityAPIView(APIView):
+    """API which will return interview schedulable time slots as a list
+    """
     
     @swagger_auto_schema(
         manual_parameters=[

@@ -38,10 +38,4 @@ logs/
 # Git Ignore for Swagger Cache
 *.swagger
 
-# Docker-related files
-docker-compose.override.yml
-.env.docker
-.env.production
-docker-compose.yml
-Dockerfile
-__docker_cache__/
+
