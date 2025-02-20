@@ -1,0 +1,47 @@
+# Python-related files
+__pycache__/
+*.py[cod]
+*.so
+*.log
+
+# Django-related files
+*.sqlite3
+*.env
+*.venv
+*.DS_Store
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# Migrations (Ignore all except __init__.py)
+**/migrations/*
+!**/migrations/__init__.py
+
+# Logs
+logs/
+*.log
+*.out
+*.err
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git Ignore for Swagger Cache
+*.swagger
+
+# Docker-related files
+docker-compose.override.yml
+.env.docker
+.env.production
+docker-compose.yml
+Dockerfile
+__docker_cache__/
